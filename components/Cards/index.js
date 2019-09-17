@@ -31,50 +31,22 @@ async function fetchData(remoteDataSourceUri) {
 }
 
 function appendArticles(target, data) {
-  // console.log(`appendArticles Data:`);
-  // console.log(data);
-
   data.then(r => {
-    const topics = r.data.articles;
-    console.log(`Status: `+r.status);
-    console.log('topics data:');
-    console.log(topics);
-
-    const articleTopicNames = ['bootstrap', 'javascript', 'jquery', 'node', 'technology'];
-    const articleTopics = [r.data.articles.bootstrap, r.data.articles.javascript, r.data.articles.jquery, r.data.articles.node, r.data.articles.technology];
-    console.log(articleTopics);
-    
-    const topicCount = articleTopics.length;
-    console.log('topicCount: '+topicCount);
-
-    for (let i = 0; i <= topicCount-1; i++) {
-    // parseTopics().forEach(t => {
-      const currentTopicName = articleTopicNames[i];
-      const currentTopic = articleTopics[i];
-
-      // console.log(i);
-      console.log('currentTopicName:');
-      console.log(currentTopicName);
-      console.log('currentTopic data:');
-      console.log(currentTopic);
-
-      const articleCount = currentTopic.length;
-      console.log('articleCount: '+articleCount);
-      
-      for (let j = 0; j <= articleCount-1; j++) {
-        target.appendChild(Article(currentTopic[j]));
-      }
-    // });
-    }
+    Object.keys(r.data.articles).forEach(category => {
+      r.data.articles[category].forEach(article => {
+        target.appendChild(Article(article, category));
+      });
+    });
   })
   .catch(e => {
     console.log(e);
   });
 }
 
-function Article(article) {
+function Article(article, category) {
   // Create Elements
   const card = document.createElement('div');
+    const cat = document.createElement('div');
     const headline = document.createElement('div');
     const author = document.createElement('div');
       const imgContainer = document.createElement('div');
@@ -82,11 +54,13 @@ function Article(article) {
       const name = document.createElement('span');
 
   // Set content
+  cat.textContent = category;
   headline.textContent = article.headline;
     image.setAttribute('src',article.authorPhoto);
     name.textContent = article.authorName;
 
   // Create Structure
+  card.appendChild(cat);
   card.appendChild(headline);
   card.appendChild(author);
     author.appendChild(imgContainer);
@@ -95,6 +69,7 @@ function Article(article) {
 
   // Apply styles
   card.classList.add('card');
+    cat.classList.add('category');
     headline.classList.add('headline');
     author.classList.add('author');
       imgContainer.classList.add('img-container');
